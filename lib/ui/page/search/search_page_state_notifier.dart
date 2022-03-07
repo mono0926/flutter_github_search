@@ -9,6 +9,17 @@ import 'package:flutter_github_search/api/data/search_result.dart';
 import 'package:flutter_github_search/api/search_api.dart';
 import 'package:flutter_github_search/ui/page/search/search_page_state.dart';
 
+// 別ファイルの方が良いかも
+final isSearchModeProvider = StateNotifierProvider<IsSearchModeNotifier, bool>(
+  (ref) => IsSearchModeNotifier(),
+);
+
+class IsSearchModeNotifier extends StateNotifier<bool> {
+  IsSearchModeNotifier() : super(false);
+
+  void toggle() => state = !state;
+}
+
 final searchPageStateNotifierProvider =
     StateNotifierProvider.autoDispose<SearchPageStateNotifier, SearchPageState>(
         (ref) => SearchPageStateNotifier(ref.read));
@@ -17,18 +28,12 @@ class SearchPageStateNotifier extends StateNotifier<SearchPageState> {
   SearchPageStateNotifier(this._reader)
       : super(
           const SearchPageState(
-            isSearchMode: false,
             searchState: SearchState.uninitialized(),
           ),
         );
 
   final Reader _reader;
   late final _searchApi = _reader(searchApiProvider);
-
-  void toggleMode() {
-    final newIsSearchMode = !state.isSearchMode;
-    state = state.copyWith(isSearchMode: newIsSearchMode);
-  }
 
   Future<void> searchRepositories(String query) async {
     if (state.searchState is Searching) {

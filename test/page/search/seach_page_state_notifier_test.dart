@@ -146,7 +146,6 @@ void main() {
 
     // given
     notifier.debugState = SearchPageState(
-      isSearchMode: false,
       searchState: SearchState.success(
         repositories: [],
         query: 'query',
@@ -211,7 +210,6 @@ void main() {
 
     // given
     notifier.debugState = SearchPageState(
-      isSearchMode: false,
       searchState: SearchState.success(
         repositories: [],
         query: 'query',

@@ -109,18 +109,17 @@ class _SearchAppBar extends HookConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSearchMode = ref.watch(
-        searchPageStateNotifierProvider.select((value) => value.isSearchMode));
+    final isSearchMode = ref.watch(isSearchModeProvider);
     return isSearchMode ? _buildSearchBar(ref) : _buildNormalBar(ref);
   }
 
   PreferredSizeWidget _buildNormalBar(WidgetRef ref) {
-    final stateNotifier = ref.watch(searchPageStateNotifierProvider.notifier);
+    final notifier = ref.watch(isSearchModeProvider.notifier);
     return AppBar(
       title: const Text('Github Search App'),
       actions: [
         IconButton(
-          onPressed: stateNotifier.toggleMode,
+          onPressed: notifier.toggle,
           icon: _searchIcon,
         )
       ],
@@ -141,7 +140,7 @@ class _SearchAppBar extends HookConsumerWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          onPressed: stateNotifier.toggleMode,
+          onPressed: () => ref.read(isSearchModeProvider.notifier).toggle(),
           icon: const Icon(Icons.close),
         )
       ],
