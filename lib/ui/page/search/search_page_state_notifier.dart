@@ -21,28 +21,22 @@ class IsSearchModeNotifier extends StateNotifier<bool> {
 }
 
 final searchPageStateNotifierProvider =
-    StateNotifierProvider.autoDispose<SearchPageStateNotifier, SearchPageState>(
+    StateNotifierProvider.autoDispose<SearchPageStateNotifier, SearchState>(
         (ref) => SearchPageStateNotifier(ref.read));
 
-class SearchPageStateNotifier extends StateNotifier<SearchPageState> {
+class SearchPageStateNotifier extends StateNotifier<SearchState> {
   SearchPageStateNotifier(this._reader)
-      : super(
-          const SearchPageState(
-            searchState: SearchState.uninitialized(),
-          ),
-        );
+      : super(const SearchState.uninitialized());
 
   final Reader _reader;
   late final _searchApi = _reader(searchApiProvider);
 
   Future<void> searchRepositories(String query) async {
-    if (state.searchState is Searching) {
+    if (state is Searching) {
       return;
     }
 
-    state = state.copyWith(
-      searchState: const SearchState.searching(),
-    );
+    state = const SearchState.searching();
 
     const page = 1;
     final SearchResult result;
@@ -50,32 +44,29 @@ class SearchPageStateNotifier extends StateNotifier<SearchPageState> {
       result = await _searchApi.search(query, page);
     } on Exception catch (e) {
       debugPrint('$e');
-      state = state.copyWith(
-        searchState: const SearchState.fail(),
-      );
+      state = const SearchState.fail();
       return;
     }
 
     if (result.items.isEmpty) {
-      state = state.copyWith(searchState: const SearchState.empty());
+      state = const SearchState.empty();
       return;
     }
 
-    state = state.copyWith(
-      searchState: SearchState.success(
-          repositories: result.repositories,
-          query: query,
-          page: page,
-          hasNext: result.hasNext),
+    state = SearchState.success(
+      repositories: result.repositories,
+      query: query,
+      page: page,
+      hasNext: result.hasNext,
     );
   }
 
   Future<void> fetchNext() async {
-    if (state.searchState is Searching || state.searchState is FetchingNext) {
+    if (state is Searching || state is FetchingNext) {
       return;
     }
 
-    final currentState = state.searchState.maybeMap(
+    final currentState = state.maybeMap(
       success: (value) => value,
       orElse: () {
         AssertionError();
@@ -84,12 +75,10 @@ class SearchPageStateNotifier extends StateNotifier<SearchPageState> {
 
     final query = currentState.query;
     final page = currentState.page + 1;
-    state = state.copyWith(
-      searchState: SearchState.fetchingNext(
-        repositories: currentState.repositories,
-        query: query,
-        page: page,
-      ),
+    state = SearchState.fetchingNext(
+      repositories: currentState.repositories,
+      query: query,
+      page: page,
     );
 
     final SearchResult result;
@@ -97,28 +86,24 @@ class SearchPageStateNotifier extends StateNotifier<SearchPageState> {
       result = await _searchApi.search(query, page);
     } on Exception catch (e) {
       debugPrint('$e');
-      state = state.copyWith(
-        searchState: SearchState.success(
-          repositories: currentState.repositories,
-          query: query,
-          page: page,
-          hasNext: false,
-        ),
+      state = SearchState.success(
+        repositories: currentState.repositories,
+        query: query,
+        page: page,
+        hasNext: false,
       );
       return;
     }
 
-    state = state.copyWith(
-      searchState: SearchState.success(
-        repositories: currentState.repositories + result.repositories,
-        query: query,
-        page: page,
-        hasNext: result.hasNext,
-      ),
+    state = SearchState.success(
+      repositories: currentState.repositories + result.repositories,
+      query: query,
+      page: page,
+      hasNext: result.hasNext,
     );
   }
 
-  set debugState(SearchPageState state) {
+  set debugState(SearchState state) {
     assert(() {
       this.state = state;
       return true;

@@ -25,8 +25,8 @@ class SearchPage extends HookConsumerWidget {
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref) {
-    final searchState = ref.watch(
-        searchPageStateNotifierProvider.select((value) => value.searchState));
+    final searchState =
+        ref.watch(searchPageStateNotifierProvider.select((value) => value));
     return searchState.when(
       uninitialized: () {
         return Container();

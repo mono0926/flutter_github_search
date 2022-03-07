@@ -44,7 +44,7 @@ void main() {
 
     final listener = Listener<SearchState>();
     _container.listen(
-      searchPageStateNotifierProvider.select((value) => value.searchState),
+      searchPageStateNotifierProvider.select((value) => value),
       listener,
       fireImmediately: true,
     );
@@ -83,7 +83,7 @@ void main() {
 
     final listener = Listener<SearchState>();
     _container.listen(
-      searchPageStateNotifierProvider.select((value) => value.searchState),
+      searchPageStateNotifierProvider.select((value) => value),
       listener,
       fireImmediately: true,
     );
@@ -109,7 +109,7 @@ void main() {
 
     final listener = Listener<SearchState>();
     _container.listen(
-      searchPageStateNotifierProvider.select((value) => value.searchState),
+      searchPageStateNotifierProvider.select((value) => value),
       listener,
       fireImmediately: true,
     );
@@ -139,19 +139,17 @@ void main() {
 
     final listener = Listener<SearchState>();
     _container.listen(
-      searchPageStateNotifierProvider.select((value) => value.searchState),
+      searchPageStateNotifierProvider.select((value) => value),
       listener,
       fireImmediately: true,
     );
 
     // given
-    notifier.debugState = SearchPageState(
-      searchState: SearchState.success(
-        repositories: [],
-        query: 'query',
-        page: 1,
-        hasNext: true,
-      ),
+    notifier.debugState = SearchState.success(
+      repositories: [],
+      query: 'query',
+      page: 1,
+      hasNext: true,
     );
 
     // when
@@ -203,19 +201,17 @@ void main() {
 
     final listener = Listener<SearchState>();
     _container.listen(
-      searchPageStateNotifierProvider.select((value) => value.searchState),
+      searchPageStateNotifierProvider.select((value) => value),
       listener,
       fireImmediately: true,
     );
 
     // given
-    notifier.debugState = SearchPageState(
-      searchState: SearchState.success(
-        repositories: [],
-        query: 'query',
-        page: 1,
-        hasNext: true,
-      ),
+    notifier.debugState = SearchState.success(
+      repositories: [],
+      query: 'query',
+      page: 1,
+      hasNext: true,
     );
     when(_mockSearchApi.search(any, any))
         .thenAnswer((realInvocation) => Future.error(Exception()));
